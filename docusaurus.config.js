@@ -43,10 +43,13 @@ const config = {
 
   presets: [
     [
-      'classic',
+      //'classic',
+      '@docusaurus/preset-classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+          //path: 'docs',
+          routeBasePath: 'arch',
           sidebarPath: './sidebars.js',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
@@ -74,6 +77,18 @@ const config = {
       }),
     ],
   ],
+  plugins: [
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'discovery',
+        path: 'discovery',
+        routeBasePath: 'discovery',
+        sidebarPath: './sidebars.js',
+        // ... other options
+      },
+    ],
+  ],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
@@ -91,7 +106,13 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
-            label: 'Tutorial',
+            label: 'Architecture',
+          },
+          {
+            to: '/discovery/intro',
+            position: 'left',
+            label: 'Discovery',
+            activeBaseRegex: '/Discovery/',
           },
           {to: '/blog', label: 'Blog', position: 'left'},
           {
