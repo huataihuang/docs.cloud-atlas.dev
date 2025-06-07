@@ -10,8 +10,8 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
+  title: 'Cloud Atlas',
+  tagline: 'Cloud Atlas - Guide for Cloud Computing',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -20,17 +20,18 @@ const config = {
   },
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://docs.cloud-atlas.dev',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'huataihuang', // Usually your GitHub org/user name.
+  projectName: 'docs.cloud-atlas.dev', // Usually your repo name.
 
   onBrokenLinks: 'throw',
+  //onBrokenLinks: 'log',
   onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
@@ -53,8 +54,8 @@ const config = {
           sidebarPath: './sidebars.js',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          // editUrl:
+          //   'https://github.com/huataihuang/docs.cloud-atlas.dev/tree/main/packages/create-docusaurus/templates/shared/',
         },
         blog: {
           showReadingTime: true,
@@ -64,8 +65,8 @@ const config = {
           },
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          // editUrl:
+          //   'https://github.com/huataihuang/docs.cloud-atlas.dev/tree/main/packages/create-docusaurus/templates/shared/',
           // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
@@ -96,30 +97,36 @@ const config = {
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
-        title: 'My Site',
+        title: 'Cloud Atlas',
         logo: {
-          alt: 'My Site Logo',
+          alt: 'Cloud Atlas Logo',
           src: 'img/logo.svg',
         },
         items: [
-          {
-            type: 'localeDropdown',
-          },
           {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
             label: 'Architecture',
           },
+          //{
+          //  to: '/discovery/intro',
+          //  position: 'left',
+          //  label: 'Discovery',
+          //  activeBaseRegex: '/Discovery/',
+          //},
           {
-            to: '/discovery/intro',
-            position: 'left',
-            label: 'Discovery',
-            activeBaseRegex: '/Discovery/',
+              href: 'https://docs.cloud-atlas.dev/discovery',
+              label: 'Discovery',
+              position: 'left',
           },
           {to: '/blog', label: 'Blog', position: 'left'},
           {
-            href: 'https://github.com/facebook/docusaurus',
+            type: 'localeDropdown',
+            position: 'right',
+          },
+          {
+            href: 'https://github.com/huataihuang/docs.cloud-atlas.dev',
             label: 'GitHub',
             position: 'right',
           },
@@ -132,25 +139,25 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Tutorial',
-                to: '/docs/intro',
+                label: 'Architecture',
+                to: '/architecture/intro',
+              },
+              {
+                label: 'Discovery',
+                href: 'https://docs.cloud-atlas.dev/discovery',
               },
             ],
           },
           {
-            title: 'Community',
+            title: 'Contact me',
             items: [
               {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-              },
-              {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
+                label: 'Linkedin',
+                href: 'https://www.linkedin.com/in/huatai-huang-a41a131a',
               },
               {
                 label: 'X',
-                href: 'https://x.com/docusaurus',
+                href: 'https://x.com/huatai',
               },
             ],
           },
@@ -163,12 +170,12 @@ const config = {
               },
               {
                 label: 'GitHub',
-                href: 'https://github.com/facebook/docusaurus',
+                href: 'https://github.com/huataihuang',
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Cloud Atlas, Inc. Built with Docusaurus.`,
       },
       prism: {
         theme: prismThemes.github,
