@@ -1,0 +1,26 @@
+{
+  "title": {
+    "message": "My Site",
+    "description": "The title in the navbar"
+  },
+  "logo.alt": {
+    "message": "My Site Logo",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.Architecture": {
+    "message": "Architecture",
+    "description": "Navbar item with label Architecture"
+  },
+  "item.label.Discovery": {
+    "message": "Discovery",
+    "description": "Navbar item with label Discovery"
+  },
+  "item.label.Blog": {
+    "message": "Blog",
+    "description": "Navbar item with label Blog"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Navbar item with label GitHub"
+  }
+}

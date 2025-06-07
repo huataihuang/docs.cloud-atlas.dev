@@ -38,7 +38,7 @@ const config = {
   // may want to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en', 'zh-CN'],
   },
 
   presets: [
@@ -48,8 +48,8 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          //path: 'docs',
-          routeBasePath: 'arch',
+          path: 'architecture',
+          routeBasePath: 'architecture',
           sidebarPath: './sidebars.js',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
@@ -102,6 +102,9 @@ const config = {
           src: 'img/logo.svg',
         },
         items: [
+          {
+            type: 'localeDropdown',
+          },
           {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
