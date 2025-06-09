@@ -20,7 +20,7 @@ function HomepageHeader() {
           <Link
             className="button button--secondary button--lg"
             to="/architecture/intro">
-            Docusaurus Tutorial - 5min ⏱️
+            Build Cloud Computing from Scratch by yourself
           </Link>
         </div>
       </div>

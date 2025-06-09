@@ -1,10 +1,10 @@
 {
   "title": {
-    "message": "My Site",
+    "message": "云图",
     "description": "The title in the navbar"
   },
   "logo.alt": {
-    "message": "My Site Logo",
+    "message": "云图 Logo",
     "description": "The alt text of navbar logo"
   },
   "item.label.Architecture": {

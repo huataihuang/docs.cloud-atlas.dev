@@ -1,0 +1,8 @@
+{
+  "label": "硬件",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "在「云图」模拟环境中使用的硬件"
+  }
+}

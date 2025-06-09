@@ -2,9 +2,12 @@
 sidebar_position: 2
 ---
 
-# Create a Document
+# HP DL360/DL380 gen9
+
+Building a virtualized simulated large-scale cluster on second-hand servers
 
 Documents are **groups of pages** connected through:
+
 
 - a **sidebar**
 - **previous/next navigation**
