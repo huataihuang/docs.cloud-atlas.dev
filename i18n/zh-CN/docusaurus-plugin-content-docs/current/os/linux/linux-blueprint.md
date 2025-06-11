@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# Linux
+# Linux 蓝图
 
 从LFS到Raspberry Pi OS，构建不同场景的Linux
 
