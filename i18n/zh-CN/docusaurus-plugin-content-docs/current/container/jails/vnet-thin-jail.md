@@ -20,13 +20,27 @@ sysrc jail_parallel_start="YES"
 
 ## Jail目录树
 
-- 我使用 [stripe 模式 ZFS](../../os/freebsd/freebsd-zfs#创建-stripe-模式-zfs-pool-zdata) 存储池 `zdata` 下的 `/zdata/jails` 卷来作为Jail文件存储:
+:::tip
+Jail文件的位置没有规定，在FreeBSD Handbook中采用的是 `/usr/local/jails` 目录。
+
+我为了方便管理和数据存储最大化，使用了 [stripe 模式 ZFS](../../os/freebsd/freebsd-zfs#创建-stripe-模式-zfs-pool-zdata) 存储池 `zdata` 下的 `/zdata/jails`
+
+注意，我使用了 `jail_zfs` 环境变量来指定ZFS位置，对应目录就是 `/$jail_zfs`
+:::
+
+- 创建jail目录结构
 
 ```bash
-zfs create zdata/jails
-zfs create zdata/jails/media
-zfs create zdata/jails/templates
-zfs create zdata/jails/containers
+export jail_zfs="zdata/jails"
+export bsd_ver="14.2"
+# 在FreeBSD中root用户的shell默认是sh，所以调整 ~/.shrc
+echo 'jail_zfs="zdata/jails"' >> ~/.shrc
+echo 'bsd_ver="14.2"' >> ~/.shrc
+
+zfs create $jail_zfs
+zfs create $jail_zfs/media
+zfs create $jail_zfs/templates
+zfs create $jail_zfs/containers
 ```
 
 完成后检查 ``df -h`` 可以看到磁盘如下:
@@ -70,32 +84,32 @@ FreeBSD Thin Jail是基于 [ZFS](../../os/freebsd/freebsd-zfs) `快照(snapshot)
 - 创建 **读写模式** 的 `14.2-RELEASE-base` (注意，大家约定俗成 `@base` 表示只读快照， `-base` 表示可读写数据集)
 
 ```bash
-zfs create -p zdata/jails/templates/14.2-RELEASE-base
+zfs create -p $jail_zfs/templates/$bsd_ver-RELEASE-base
 ```
 
 - 下载用户空间:
 
 ```bash
-fetch https://download.freebsd.org/ftp/releases/amd64/amd64/14.2-RELEASE/base.txz -o /zdata/jails/media/14.2-RELEASE-base.txz
+fetch https://download.freebsd.org/ftp/releases/amd64/amd64/$bsd_ver-RELEASE/base.txz -o /$jail_zfs/media/$bsd_ver-RELEASE-base.txz
 ```
 
 - 将下载内容解压缩到模版目录: **内容解压缩到模板目录( 14.2-RELEASE-base 后续不需要创建快照，直接使用)**
 
 ```bash
-tar -xf /zdata/jails/media/14.2-RELEASE-base.txz -C /zdata/jails/templates/14.2-RELEASE-base --unlink
+tar -xf /$jail_zfs/media/$bsd_ver-RELEASE-base.txz -C /$jail_zfs/templates/$bsd_ver-RELEASE-base --unlink
 ```
 
 - 将时区和DNS配置复制到模板目录:
 
 ```bash
-cp /etc/resolv.conf /zdata/jails/templates/14.2-RELEASE-base/etc/resolv.conf
-cp /etc/localtime   /zdata/jails/templates/14.2-RELEASE-base/etc/localtime
+cp /etc/resolv.conf /$jail_zfs/templates/$bsd_ver-RELEASE-base/etc/resolv.conf
+cp /etc/localtime   /$jail_zfs/templates/$bsd_ver-RELEASE-base/etc/localtime
 ```
 
 - 更新模板补丁:
 
 ```bash
-freebsd-update -b /usr/local/jails/templates/14.2-RELEASE-base/ fetch install
+freebsd-update -b /$jail_zfs/templates/$bsd_ver-RELEASE-base/ fetch install
 ```
 
 :::tip
@@ -105,28 +119,30 @@ freebsd-update -b /usr/local/jails/templates/14.2-RELEASE-base/ fetch install
 - 创建一个特定数据集 `skeleton` (**骨骼**) ，这个 "骨骼" `skeleton` 命名非常形象，用意就是构建特殊的支持大量thin jial的框架底座
 
 ```bash
-zfs create -p zdata/jails/templates/14.2-RELEASE-skeleton
+zfs create -p $jail_zfs/templates/$bsd_ver-RELEASE-skeleton
 ```
 
 - 执行以下命令，将特定目录移入 `skeleton` 数据集，并构建 `base` 和 `skeleton` 必要目录的软连接关系
 
 ```bash
-mkdir -p /zdata/jails/templates/14.2-RELEASE-skeleton/home
-mkdir -p /zdata/jails/templates/14.2-RELEASE-skeleton/usr
+mkdir -p /$jail_zfs/templates/$bsd_ver-RELEASE-skeleton/home
+mkdir -p /$jail_zfs/templates/$bsd_ver-RELEASE-skeleton/usr
 # etc目录包含发行版提供的配置文件
-mv /zdata/jails/templates/14.2-RELEASE-base/etc /zdata/jails/templates/14.2-RELEASE-skeleton/etc
+mv /$jail_zfs/templates/$bsd_ver-RELEASE-base/etc /$jail_zfs/templates/$bsd_ver-RELEASE-skeleton/etc
 # local目录是空的
-mv /zdata/jails/templates/14.2-RELEASE-base/usr/local /zdata/jails/templates/14.2-RELEASE-skeleton/usr/local
+mv /$jail_zfs/templates/$bsd_ver-RELEASE-base/usr/local /$jail_zfs/templates/$bsd_ver-RELEASE-skeleton/usr/local
 # tmp 目录是空的
-mv /zdata/jails/templates/14.2-RELEASE-base/tmp /zdata/jails/templates/14.2-RELEASE-skeleton/tmp
+mv /$jail_zfs/templates/$bsd_ver-RELEASE-base/tmp /$jail_zfs/templates/$bsd_ver-RELEASE-skeleton/tmp
 # var 目录有很多预存目录，其中移动时有报错显示 var/empty 目录没有权限
-mv /zdata/jails/templates/14.2-RELEASE-base/var /zdata/jails/templates/14.2-RELEASE-skeleton/var
+mkdir /$jail_zfs/templates/$bsd_ver-RELEASE-skeleton/var
+rsync -avz /$jail_zfs/templates/$bsd_ver-RELEASE-base/var/ /$jail_zfs/templates/$bsd_ver-RELEASE-skeleton/var
+mv /$jail_zfs/templates/$bsd_ver-RELEASE-base/var /$jail_zfs/templates/$bsd_ver-RELEASE-base/var.bak
 # root 目录是管理员目录，有基本profile文件
-mv /zdata/jails/templates/14.2-RELEASE-base/root /zdata/jails/templates/14.2-RELEASE-skeleton/root
+mv /$jail_zfs/templates/$bsd_ver-RELEASE-base/root /$jail_zfs/templates/$bsd_ver-RELEASE-skeleton/root
 ```
 
 :::tip
-执行 `mv /zdata/jails/templates/14.2-RELEASE-base/var /zdata/jails/templates/14.2-RELEASE-skeleton/var` 有如下报错:
+执行 `mv /$jail_zfs/templates/$bsd_ver-RELEASE-base/var /$jail_zfs/templates/$bsd_ver-RELEASE-skeleton/var` 有如下报错:
 
 ```bash
 mv: /zdata/jails/templates/14.2-RELEASE-base/var/empty: Operation not permitted
@@ -134,35 +150,65 @@ mv: /zdata/jails/templates/14.2-RELEASE-base/var: Directory not empty
 mv: /bin/rm /zdata/jails/templates/14.2-RELEASE-base/var: terminated with 1 (non-zero) status
 ```
 
-这是因为  `var/empty` 目录没有权限删除: `mv var/empty: Operation not permitted`
+这是因为  `var/empty` 目录没有权限删除: `mv var/empty: Operation not permitted` 
 
-我采用以下workround绕过:
+**警告⚠️，上述mv命令会导致源和目标var目录都残缺损坏，所以千万不要执行，而应该采用rsyc同步目录**
 
-```bash
-cd /zdata/jails/templates/14.2-RELEASE-base/
-mv var var.bak
-```
+所以 **必须** 先复制目录，也就是使用 ``rsync`` ，然后再移除原var目录
 :::
 
 - 执行以下命令创建软连接:
 
 ```bash
-cd /zdata/jails/templates/14.2-RELEASE-base/
+cd /$jail_zfs/templates/$bsd_ver-RELEASE-base/
 mkdir skeleton
 ln -s skeleton/etc etc
 ln -s skeleton/home home
 ln -s skeleton/root root
-ln -s skeleton/usr/local usr/local
+ln -s ../skeleton/usr/local usr/local
 ln -s skeleton/tmp tmp
 ln -s skeleton/var var
+```
+
+:::warning
+我在实践NullFS的Thin Jails，发现移动到 `skeleton` 目录下的 `/etc` 目录有一个子目录 `/etc/ssl/certs` 。这个证书目录下的文件是软链接到 `../../../usr/share/certs/trusted/` 目录下的证书文件。由于 `/etc` 目录移动后会导致这些相对链接失效，所以需要有一个修复软链接的步骤。
+
+如果不执行这个证书软链接修复，则后续host主机上执行 `pkg -j <jail_name> install <package_name>` 会报错；而在jail中执行 `pkg` 命令会显示证书相关错误:
+
+```
+Certificate verification failed for /C=US/O=Let's Encrypt/CN=E6
+```
+:::
+
+- 修复 `/etc/ssl/certs` 目录下证书文件软链接:
+
+```bash
+cd /$jail_zfs/templates/$bsd_ver-RELEASE-skeleton/etc/ssl/certs
+
+# 先保存一份原始列表记录
+ls -lh > /tmp/fix_link.txt
+
+# 生成unlink命令
+ls | sed "s@^@unlink @" > /tmp/unlink.sh
+
+# 生成fix命令
+# 这里不能使用绝对路径链接，否则会报错 link: ffdd40f9.0: Cross-device link
+# ls -lh | awk '{print $NF, $(NF-2)}' | cut -c 9- | tail -n +2 | sed  "s@^@link @" > /tmp/fix_link.sh
+ls -lh | awk '{print $NF, $(NF-2)}' | tail -n +2 | sed 's@^@ln -s ../@' > /tmp/fix_link.sh
+
+# 检查一下 /tmp/fix_link.sh 是否满足要求
+# 没有问题在执行以下2条命令
+
+sh /tmp/unlink.sh
+sh /tmp/fix_link.sh
 ```
 
 - 在 `skeleton` 就绪之后，需要将数据复制到 jail 目录(如果是UFS文件系统)，对于ZFS则非常方便使用快照:
 
 ```bash
-zfs snapshot zdata/jails/templates/14.2-RELEASE-skeleton@base
+zfs snapshot $jail_zfs/templates/$bsd_ver-RELEASE-skeleton@base
 # 假设这里创建名为dev的jail
-zfs clone zdata/jails/templates/14.2-RELEASE-skeleton@base zdata/jails/containers/dev
+zfs clone $jail_zfs/templates/$bsd_ver-RELEASE-skeleton@base $jail_zfs/containers/dev
 ```
 
 - 现在可以看到相关ZFS数据集如下:
@@ -185,14 +231,22 @@ zdata/jails/containers/dev                     6.1T    4.4M    6.1T     0%    /z
 ```bash
 # 创建 dev 所使用的nullfs模板目录，这个目录就是jail的根PATH
 # 和常规Jail仅命名 ${name} 不同，采用 ${name}-nullfs-base
-mkdir -p /zdata/jails/dev-nullfs-base
+mkdir -p /$jail_zfs/dev-nullfs-base
 ```
 
 ### 配置jail
 
-- 创建所有jail使用的公共配置部分 `/etc/jail.conf` :
+:::tip
+- Jail的配置分为公共部分和特定部分，公共部分涵盖了所有jails共有的配置
+- 尽可能提炼出Jails的公共部分，这样就可以简化针对每个jail的特定部分，方便编写较稳维护
+:::
+
+- 创建所有jail使用的公共配置部分 `/etc/jail.conf` (使用了 VNET 模式配置):
 
 ```bash
+ # 这里 devfs_ruleset 和Linux Jail的4不同
+ devfs_ruleset=5;
+
 # STARTUP/LOGGING
 exec.start = "/bin/sh /etc/rc";
 exec.stop = "/bin/sh /etc/rc.shutdown";
@@ -203,49 +257,42 @@ allow.raw_sockets;
 exec.clean;
 mount.devfs;
 
-# HOSTNAME/PATH
+# HOSTNAME/PATH - NullFS
 host.hostname = "${name}";
+path = "/zdata/jails/${name}-nullfs-base";
 
-# NETWORK
+# NETWORK - VNET/VIMAGE
 #ip4 = inherit;
 interface = igc0bridge;
+vnet;
+vnet.interface = "${epair}b";
+# common NETWORK config
+$gateway = "192.168.7.101";
+$bridge = "igc0bridge";
+$epair = "epair${id}";
+
+# ADD TO bridge INTERFACE
+exec.prestart += "ifconfig ${epair} create up";
+exec.prestart += "ifconfig ${epair}a up descr jail:${name}";
+exec.prestart += "ifconfig ${bridge} addm ${epair}a up";
+exec.start    += "ifconfig ${epair}b ${ip} up";
+exec.start    += "route add default ${gateway}";
+exec.poststop = "ifconfig ${bridge} deletem ${epair}a";
+exec.poststop += "ifconfig ${epair}a destroy";
+
+# MOUNT
+mount.fstab = "/zdata/jails/${name}-nullfs-base.fstab";
 
 .include "/etc/jail.conf.d/*.conf";
 ```
 
-- `/etc/jail.conf.d/dev.conf` 独立配置部分( 使用了 VNET 模式配置):
+- `/etc/jail.conf.d/dev.conf` 独立配置部分:
 
 ```bash
 dev {
-  # 这里 devfs_ruleset 和Linux Jail的4不同
-  devfs_ruleset=5;
-  # 去除了 ip4.addr 配置
-
-  # HOSTNAME/PATH
-  path = "/zdata/jails/${name}-nullfs-base";
- 
-  # VNET/VIMAGE
-  vnet;
-  vnet.interface = "${epair}b";
-
   # NETWORKS/INTERFACES
   $id = "253";
   $ip = "192.168.7.${id}/24";
-  $gateway = "192.168.7.101";
-  $bridge = "igc0bridge"; 
-  $epair = "epair${id}";
-
-  # ADD TO bridge INTERFACE
-  exec.prestart += "ifconfig ${epair} create up";
-  exec.prestart += "ifconfig ${epair}a up descr jail:${name}";
-  exec.prestart += "ifconfig ${bridge} addm ${epair}a up";
-  exec.start    += "ifconfig ${epair}b ${ip} up";
-  exec.start    += "route add default ${gateway}";
-  exec.poststop = "ifconfig ${bridge} deletem ${epair}a";
-  exec.poststop += "ifconfig ${epair}a destroy";
-  
-  # MOUNT
-  mount.fstab = "/zdata/jails/${name}-nullfs-base.fstab";
 }
 ```
 
@@ -272,3 +319,41 @@ jail_parallel_start="YES"
 jail_list="dev"
 jail_reverse_stop="YES"
 ```
+
+### 脚本辅助配置jail
+
+- 写了一个简单的脚本帮助创建配置文件:
+
+```bash title="jail_zfs.sh"
+export jail_zfs="zdata/jails"
+export bsd_ver="14.2"
+
+jail_name=$1
+id=$2
+
+zfs clone $jail_zfs/templates/$bsd_ver-RELEASE-skeleton@base $jail_zfs/containers/$jail_name
+mkdir -p /$jail_zfs/$jail_name-nullfs-base
+
+cat << EOF > /$jail_zfs/$jail_name-nullfs-base.fstab
+/$jail_zfs/templates/14.2-RELEASE-base  /$jail_zfs/$jail_name-nullfs-base/         nullfs  ro  0 0
+/$jail_zfs/containers/$jail_name               /$jail_zfs/$jail_name-nullfs-base/skeleton nullfs  rw  0 0
+EOF
+
+cat << 'EOF' > /etc/jail.conf.d/$jail_name.conf
+JAIL_NAME {
+  $id = "ID";
+  $ip = "192.168.7.${id}/24";
+}
+EOF
+
+sed -i '' "s@JAIL_NAME@$jail_name@" /etc/jail.conf.d/$jail_name.conf
+sed -i '' "s@ID@$id@" /etc/jail.conf.d/$jail_name.conf
+```
+
+通过执行
+
+```bash
+./jail_zfs.sh pg-1 111
+```
+
+就可以创建一个使用 `192.168.7.111` 为IP的名为 `pg-1` 的Jail
