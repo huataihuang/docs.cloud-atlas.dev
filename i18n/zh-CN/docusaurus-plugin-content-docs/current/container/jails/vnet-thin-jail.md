@@ -208,7 +208,8 @@ sh /tmp/fix_link.sh
 ```bash
 zfs snapshot $jail_zfs/templates/$bsd_ver-RELEASE-skeleton@base
 # 假设这里创建名为dev的jail
-zfs clone $jail_zfs/templates/$bsd_ver-RELEASE-skeleton@base $jail_zfs/containers/dev
+jail_name=dev
+zfs clone $jail_zfs/templates/$bsd_ver-RELEASE-skeleton@base $jail_zfs/containers/$jail_name
 ```
 
 - 现在可以看到相关ZFS数据集如下:
@@ -244,8 +245,8 @@ mkdir -p /$jail_zfs/dev-nullfs-base
 - 创建所有jail使用的公共配置部分 `/etc/jail.conf` (使用了 VNET 模式配置):
 
 ```bash
- # 这里 devfs_ruleset 和Linux Jail的4不同
- devfs_ruleset=5;
+# 这里 devfs_ruleset 和Linux Jail的4不同
+devfs_ruleset=5;
 
 # STARTUP/LOGGING
 exec.start = "/bin/sh /etc/rc";
@@ -256,6 +257,11 @@ exec.consolelog = "/var/log/jail_console_${name}.log";
 allow.raw_sockets;
 exec.clean;
 mount.devfs;
+
+allow.mount;
+allow.mount.devfs;
+
+enforce_statfs = 1;
 
 # HOSTNAME/PATH - NullFS
 host.hostname = "${name}";
@@ -285,6 +291,33 @@ mount.fstab = "/zdata/jails/${name}-nullfs-base.fstab";
 
 .include "/etc/jail.conf.d/*.conf";
 ```
+
+:::tip
+在 `jail.conf` 中一定要配置 `allow.mount` 相关的3条配置:
+
+```
+allow.mount;
+allow.mount.devfs;
+
+enforce_statfs = 1;
+```
+
+这样 `dev` jail 中才能执行 `df -h` 看到
+
+```
+Filesystem                                  Size    Used   Avail Capacity  Mounted on
+/zdata/jails/templates/14.3-RELEASE-base    6.1T    457M    6.1T     0%    /
+/zdata/jails/containers/dev                 6.1T    860M    6.1T     0%    /skeleton
+devfs                                       1.0K      0B    1.0K     0%    /dev
+```
+
+没有这个 `allow.mount` 在jail中会看到非常奇怪的只有 `/` 挂载
+
+```
+Filesystem                                  Size    Used   Avail Capacity  Mounted on
+/zdata/jails/templates/14.3-RELEASE-base    6.1T    457M    6.1T     0%    /
+```
+:::
 
 - `/etc/jail.conf.d/dev.conf` 独立配置部分:
 

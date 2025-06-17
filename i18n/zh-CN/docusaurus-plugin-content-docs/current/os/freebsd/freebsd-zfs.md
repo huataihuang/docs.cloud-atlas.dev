@@ -211,3 +211,10 @@ zpool create -f -o ashift=12 zdata /dev/diskid/DISK-Y39B70RTK7ASp4 \
 - `-o ashift=12` 的 `ashift` 属性设置为 `12` ，以对应 4KiB (4096字节)块大小。通常对于HDD和SSD，能够获得较好的性能和兼容性。底层是 512字节 一个扇区，所以 `2^12` = **4096** 就能够对齐和整块读写磁盘。如果没有指定这个 ashift 参数，ZFS会自动检测 ashift ，如果检测失败就会默认使用 `ashift=9` ，这会导致性能损失。这个 ashift 参数一旦设置，不能修改
 - 这里使用了 `diskid` 来标记磁盘，以避免搞错磁盘
 :::
+
+- 创建zfs卷集
+
+```bash
+# 存储文档的卷集，其他卷集主要在Jails中使用
+zfs create zdata/docs
+```
