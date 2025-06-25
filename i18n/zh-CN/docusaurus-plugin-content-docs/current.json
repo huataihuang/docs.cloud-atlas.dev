@@ -3,16 +3,40 @@
     "message": "Next",
     "description": "The label for version current"
   },
-  "sidebar.tutorialSidebar.category.Tutorial - Basics": {
-    "message": "Tutorial - Basics",
-    "description": "The label for category Tutorial - Basics in sidebar tutorialSidebar"
+  "sidebar.tutorialSidebar.category.Infrastructure": {
+    "message": "基础设施",
+    "description": "The label for category Infrastructure in sidebar tutorialSidebar"
   },
-  "sidebar.tutorialSidebar.category.Tutorial - Basics.link.generated-index.description": {
-    "message": "5 minutes to learn the most important Docusaurus concepts.",
-    "description": "The generated-index page description for category Tutorial - Basics in sidebar tutorialSidebar"
+  "sidebar.tutorialSidebar.category.Hardware": {
+    "message": "硬件",
+    "description": "The label for category Hardware in sidebar tutorialSidebar"
   },
-  "sidebar.tutorialSidebar.category.Tutorial - Extras": {
-    "message": "Tutorial - Extras",
-    "description": "The label for category Tutorial - Extras in sidebar tutorialSidebar"
+  "sidebar.tutorialSidebar.category.Hardware.link.generated-index.description": {
+    "message": "Hardware used in Cloud Atlas simulate environment",
+    "description": "The generated-index page description for category Hardware in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Operation System": {
+    "message": "操作系统",
+    "description": "The label for category Operation System in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.FreeBSD": {
+    "message": "FreeBSD",
+    "description": "The label for category FreeBSD in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Linux": {
+    "message": "Linux",
+    "description": "The label for category Linux in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Container": {
+    "message": "容器",
+    "description": "The label for category Container in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.FreeBSD jails": {
+    "message": "FreeBSD jails",
+    "description": "The label for category FreeBSD jails in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Linux Docker": {
+    "message": "Linux Docker",
+    "description": "The label for category Linux Docker in sidebar tutorialSidebar"
   }
 }
