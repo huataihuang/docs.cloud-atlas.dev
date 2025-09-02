@@ -1,0 +1,7 @@
+{
+  "label": "FreeBSD bhyve",
+  "position": 1,
+  "link": {
+    "type": "generated-index"
+  }
+}

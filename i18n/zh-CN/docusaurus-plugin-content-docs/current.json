@@ -38,5 +38,17 @@
   "sidebar.tutorialSidebar.category.Linux Docker": {
     "message": "Linux Docker",
     "description": "The label for category Linux Docker in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Virtual": {
+    "message": "Virtual",
+    "description": "The label for category Virtual in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.FreeBSD bhyve": {
+    "message": "FreeBSD bhyve",
+    "description": "The label for category FreeBSD bhyve in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.KVM + QEMU": {
+    "message": "KVM + QEMU",
+    "description": "The label for category KVM + QEMU in sidebar tutorialSidebar"
   }
 }

@@ -28,7 +28,7 @@ if_bridge_load="YES"
 #bridgestp_load="YES"
 ```
 
-- 修改 `/etc/rc.conf` 配置交换机以及将物理和虚拟网卡连接(详情参考 [FreeBSD bridge快速起步](https://docs.cloud-atlas.dev/discovery/freebsd/network/bridge/freebsd_bridge_startup.html)
+- 修改 `/etc/rc.conf` 配置交换机以及将物理和虚拟网卡连接(详情参考 [FreeBSD bridge快速起步](https://docs.cloud-atlas.dev/discovery/freebsd/network/bridge/freebsd_bridge_startup.html) )
 
 ```bash
 # 创建网桥以及用于虚拟机的tap虚拟网络设备
