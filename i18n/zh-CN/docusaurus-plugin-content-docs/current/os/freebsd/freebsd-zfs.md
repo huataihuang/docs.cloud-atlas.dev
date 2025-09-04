@@ -8,7 +8,38 @@ ZFS是最好的文件系统
 
 ## 什么是 ZFS
 
+## `zroot` 数据存储
+
+FreeBSD安装过程支持直接构建ZFS作为操作系统root存储，默认命名为 `zroot` zpool。我由于设备PCIe插槽有限(用于GPU)并且资金捉襟见肘，所以最终只在 **一块NVMe** 上使用默认的 `zroot` 存储池构建和使用ZFS。
+
+不过，为了后续 [vm-bhyve运行虚拟化](../../virtual/bhyve/bhyve-vm) 准备，构建独立的dataset:
+
+```bash
+zfs create zroot/vms
+zfs set compression=lz4 zroot/vms
+
+# 为 vm-bhyve 提供独立的dataset
+zfs create zroot/vms/.config
+zfs create zroot/vms/.img
+zfs create zroot/vms/.iso
+zfs create zroot/vms/.templates
+```
+
+::: tips
+
+`compression=lz4` 启用轻量级lz4压缩能够提升存储利用率，同时因为压缩数据也提高了存储IO性能(但消耗CPU计算资源)
+
+:::
+
 ## `zdata` 数据存储
+
+::: note
+
+由于我的 [组装服务器](../../hardware/assembly-machine) 只有一个PCIe插槽，通过拆分能够安装3个PCIe设备，我需要将宝贵的PCIe接口用于机器学习的GPU设备，所以最终我取消了 `zdata` 的多NVMe存储，而改为仅使用一块NVMe的 `zroot` 数据存储。
+
+这段配置仅供参考，也许后续我有资金的话会继续搞一个规模较大的多NVMe ZFS存储
+
+:::
 
 在 [组装服务器](../../hardware/assembly-machine) 中我使用了 **4块** NVMe存储，为了能够充分使用空间，采用了 ``stripe`` 模式。
 

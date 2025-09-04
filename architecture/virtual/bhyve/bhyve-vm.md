@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# run ubuntu in bhyve
+# run VM in bhyve
 
 prepare for machine learning
 

@@ -50,5 +50,17 @@
   "sidebar.tutorialSidebar.category.KVM + QEMU": {
     "message": "KVM + QEMU",
     "description": "The label for category KVM + QEMU in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Storage": {
+    "message": "Storage",
+    "description": "The label for category Storage in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Ceph": {
+    "message": "Ceph",
+    "description": "The label for category Ceph in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Gluster": {
+    "message": "Gluster",
+    "description": "The label for category Gluster in sidebar tutorialSidebar"
   }
 }
